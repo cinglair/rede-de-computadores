@@ -1,0 +1,67 @@
+﻿enable
+conf t
+hostname r-pb-cc
+ipv6 unicast-routing
+interface Se0/0/0
+description pb-vit
+clock rate 56000
+ip address 200.200.10.225 255.255.255.252
+ipv6 address 2001:DB8:ACAD:0AFF::1/112
+ipv6 enable
+no shutdown
+exit
+interface Se0/0/1
+description ita-pb
+ip address 200.200.10.238 255.255.255.252
+ipv6 address 2001:DB8:ACAD:0AFF::3:2/112
+ipv6 enable
+no shutdown
+exit
+interface fa0/0
+description Matriz
+ip address 200.200.10.1 255.255.255.192
+ipv6 address 2001:DB8:ACAD:0A00::1/64
+ipv6 address Fe80::1 link-local
+ipv6 enable
+no shutdown
+exit
+ip route 200.200.10.228 255.255.255.252 200.200.10.226
+ip route 200.200.10.232 255.255.255.252 200.200.10.226
+ip route 200.200.10.240 255.255.255.252 200.200.10.226
+ip route 200.200.10.64 255.255.255.224 200.200.10.226
+ip route 200.200.10.96 255.255.255.224 200.200.10.226
+ipv6 route 2001:DB8:ACAD:0AFF::1:0/112 2001:DB8:ACAD:0AFF::2
+ipv6 route 2001:DB8:ACAD:0AFF::2:0/112 2001:DB8:ACAD:0AFF::2
+ipv6 route 2001:DB8:ACAD:0AFF::4:0/112 2001:DB8:ACAD:0AFF::2
+ipv6 route 2001:DB8:ACAD:0A01::/64 2001:DB8:ACAD:0AFF::2
+ipv6 route 2001:DB8:ACAD:0A02::/64 2001:DB8:ACAD:0AFF::2
+
+
+security passwords min-length 10
+login block-for 120 attempts 3 within 60
+line vty 0 15
+exec-timeout 5
+login local
+transport input ssh
+exit
+service password-encryption
+line con 0
+exec-timeout 5
+password @Cons-cinglair
+login
+exit
+enable secret @dmin-cinglair
+banner motd $    ---------------------------------------------------------------------
+|                                                                                                                                                                            |
+| Roteador Pato Branco                                                                                           |
+|                                                                                                                                                                            |
+| ATENCAO Acesso Restrito a pessoas autorizadas!                                                            |
+|                                                                                                                                                                            |
+| Administrador: CINGLAIR AUGUSTO JUSTAKOWSKI CAPELLO(cinglair@alunos.utfpr.edu.br)|
+|                                                                                                                                                                            |
+-----------------------------------------------------------------------------------$
+ip domain name cinglair.capello.com.br
+crypto key generate rsa general-keys modulus 1024
+username cinglair secret ssh@Network1ng
+exit
+w
